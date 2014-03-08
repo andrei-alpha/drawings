@@ -12,6 +12,7 @@ using namespace std;
 int W, H; 
 typedef pair<int, int> coord;
 
+const int oo = 99999999;
 const int xx[] = {-1, -1, -1, 0, 1, 1, 1, 0};
 const int yy[] = {-1, 0, 1, 1, 1, 0, -1, -1};
 
@@ -22,7 +23,7 @@ void utils_init(int width, int height) {
 
 int color_diff(int color1, int color2) {
   vector<int> rgb1 = color_decode(color1);
-  vector<int> rgb2 = color_decode(color1);
+  vector<int> rgb2 = color_decode(color2);
   int dr = rgb1[0] - rgb2[0];
   int dg = rgb1[1] - rgb2[1];
   int db = rgb1[2] - rgb2[2];
@@ -45,9 +46,9 @@ vector<coord> get_neighbours(coord xy) {
 int color_match(int pixels[][1024], int color, coord xy) {
   vector<coord> neighbours = get_neighbours(xy);
 
-  int score = 0;
+  int score = oo;
   for (int i = 0; i < neighbours.size(); ++i)
-  	score += color_diff(color, pixels[neighbours[i].first][neighbours[i].second]);
+  	score = min(score, color_diff(color, pixels[neighbours[i].first][neighbours[i].second]));
   return score;
 }
 
