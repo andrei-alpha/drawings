@@ -8,3 +8,5 @@
 extern unsigned long gettimemicroseconds(void);
 
 extern long stamp(void);
+
+extern void micro_sleep(int);
