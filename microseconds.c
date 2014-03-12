@@ -36,3 +36,7 @@ long stamp()
   _stamp = tv.tv_sec * 1000 * 1000 * 1000 + tv.tv_nsec;
   return _stamp;
 }
+
+void micro_sleep(int microseconds) {
+  usleep(microseconds);
+}
