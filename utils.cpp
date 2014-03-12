@@ -43,12 +43,12 @@ vector<coord> get_neighbours(coord xy) {
   return neighbours;
 }
 
-int color_match(int pixels[][1024], int color, coord xy) {
+int color_match(int pixels[][2048], int color, coord xy) {
   vector<coord> neighbours = get_neighbours(xy);
 
   int score = oo;
   for (int i = 0; i < neighbours.size(); ++i)
-  	score = min(score, color_diff(color, pixels[neighbours[i].first][neighbours[i].second]));
+  	score = min(color_diff(color, pixels[neighbours[i].first][neighbours[i].second]), score);
   return score;
 }
 

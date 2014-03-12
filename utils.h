@@ -9,7 +9,7 @@ extern int color_diff(int color1, int color2);
 
 extern vector<coord> get_neighbours(coord xy);
 
-extern int color_match(int pixels[][1024], int color, coord xy);
+extern int color_match(int pixels[][2048], int color, coord xy);
 
 extern int color_encode(int r, int g, int b);
 
