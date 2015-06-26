@@ -16,12 +16,15 @@ using namespace std;
 #define NoColors 32
 #define CORES 2
 
-int pixels[1024][1024];
+int pixels[2048][2048];
 int colors[64000]; // W * H + 1];
 int available[W * H + 1];
 vector< bitset<H + 1> > is_available(W + 1);
 
-typedef struct worker_struct {bool is_work, finish; int start, end;
+// Shared variables for worker threads
+int workers_color, workers_start, workers_end;
+
+typedef struct worker_struct {bool is_work, finish;
   int color, score; int best_ind; coord best; } worker_struct;
 worker_struct workers[CORES];
 
@@ -36,15 +39,18 @@ void *color_match_thread(void *arg) {
       continue;
     }
 
-    //fprintf (stderr, "Worker %d started work %d %d\n", ind, workers[ind].start, workers[ind].end);
+    fprintf (stderr, "Worker %d started work\n", ind);
     workers[ind].score = oo;
-    
-    for (int i = workers[ind].start; i < workers[ind].end; ++i) {
+      
+    int cnt = 0;
+    while (workers_start < workers_end) {
+      int i = workers_start++;
       if (available[i] == -1)
         continue;
 
+      ++cnt;
       coord xy = coord_decode(available[i]);
-      int _score = color_match(pixels, workers[ind].color, xy);
+      int _score = color_match(pixels, workers_color, xy);
 
       if (_score < workers[ind].score) {
         workers[ind].score = _score;
@@ -52,7 +58,7 @@ void *color_match_thread(void *arg) {
         workers[ind].best_ind = i;
       }
     }
-    //fprintf (stderr, "Worker %d finished work %d %d\n", ind, coord_encode(workers[ind].best), workers[ind].best_ind);
+    fprintf (stderr, "Worker %d finished work %d\n", ind, cnt);
 
     workers[ind].is_work = false;
   }
@@ -104,16 +110,11 @@ void render_image() {
     else {
       long ss1 = stamp();
       
-      int start = 1;
-      int end = available[0] + 1;
-      int iter_step = (end - start + 1) / CORES;
+      workers_color = color;
+      workers_start = 1;
+      workers_end = available[0] + 1;
+      
       for (int t = 0; t < CORES; ++t) {
-        int _start = start + (iter_step * t);
-        int _end = (t == CORES - 1 ? end : _start + iter_step - 1);
-
-        workers[t].color = color;
-        workers[t].start = _start;
-        workers[t].end = _end;
         workers[t].is_work = true;
 
         // The last worker is the main thread

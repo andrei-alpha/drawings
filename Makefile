@@ -1,6 +1,6 @@
 CPP = g++
 SRC = drawing.cpp utils.cpp microseconds.c
-FLAGS = -pthread -O3 -static -std=c++0x
+FLAGS = -pthread -Ofast -static -std=c++0x
 LIBS = -lrt -lm
 
 all: drawing
