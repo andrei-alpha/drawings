@@ -14,3 +14,6 @@
 
 # Images
 *.ppm
+
+# Main binary
+drawing
